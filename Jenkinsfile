@@ -25,6 +25,7 @@ pipeline {
             steps {
                 echo "Code packaging started"
                 sh 'mvn package'
+                sh 'cp target/*.jar target/bookmytickets-1.1.${BUILD_NUMBER}.jar'
                 echo "Code packaging completed!!!"
             }
         }
