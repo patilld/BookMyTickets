@@ -36,7 +36,7 @@ pipeline {
                 echo "Docker image built!!!"
             }
         }
-        stage("Push docker image") {
+        stage("Push docker image to Docker hub") {
             steps {
                 echo "Pushing Docker image"
                 sh 'docker push patilld94/bookmytickets:1.1.${BUILD_NUMBER}'
