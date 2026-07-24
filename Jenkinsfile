@@ -55,9 +55,19 @@ pipeline {
                 script {
                     withDockerRegistry([credentialsId: 'ecr-credentials', url: "https://554422869155.dkr.ecr.ap-south-1.amazonaws.com"]) {
                         echo 'Pushing docker image to ECR...'
-                        sh 'docker tag bookmytickets:latest 554422869155.dkr.ecr.ap-south-1.amazonaws.com/patilld94/bookmytickets:1.1.${BUILD_NUMBER}'
+
                         echo 'Docker image pushed to ECR successfully!'
                     }
+                }
+
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',
+                                  credentialsId: 'ecr-credentials']]) {
+                    sh """
+                      docker tag bookmytickets:latest 554422869155.dkr.ecr.ap-south-1.amazonaws.com/patilld94/bookmytickets:1.1.${BUILD_NUMBER}
+                      aws ecr get-login-password --region ap-south-1 \
+                        | docker login --username AWS --password-stdin 554422869155.dkr.ecr.ap-south-1.amazonaws.com
+                      docker push 554422869155.dkr.ecr.ap-south-1.amazonaws.com/patilld94/bookmytickets:1.1.${BUILD_NUMBER}
+                    """
                 }
             }
         }
