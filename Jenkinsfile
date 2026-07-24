@@ -29,6 +29,19 @@ pipeline {
                 echo "Code packaging completed!!!"
             }
         }
+        stage("Build docker image") {
+            steps {
+                echo "Building Docker image"
+                sh 'docker build -t bookmytickets -t patilld94/bookmytickets:1.1.${BUILD_NUMBER} .'
+                echo "Docker image built!!!"
+            }
+        }
+        stage("Push docker image") {
+            steps {
+                echo "Pushing Docker image"
+                sh 'docker push patilld94/bookmytickets:1.1.${BUILD_NUMBER}'
+                echo "Docker image pushed!!!"
+            }
+        }
     }
-
 }
