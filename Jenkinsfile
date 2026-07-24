@@ -38,10 +38,20 @@ pipeline {
         }
         stage("Push docker image to Docker hub") {
             steps {
-                echo "Pushing Docker image"
-                sh 'docker push patilld94/bookmytickets:1.1.${BUILD_NUMBER}'
-                echo "Docker image pushed!!!"
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-cred-id',
+                                                     usernameVariable: 'DOCKER_USER',
+                                                     passwordVariable: 'DOCKER_PASS')])
+                    sh 'docker login docker.io -u ${DOCKER_USER} -p ${DOCKER_PASS}'
+                    echo 'Pushing Docker Image to Docker Hub...'
+                    sh 'docker push patilld94/bookmytickets:1.1.${BUILD_NUMBER}'
+                    echo 'Docker Image Pushed to Docker Hub Successfully!'
+                }
             }
         }
-    }
+        stage("Remove docker images from local machine") {
+            steps {
+                sh 'docker system prune -af'
+            }
+        }
 }
