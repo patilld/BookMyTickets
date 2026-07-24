@@ -50,6 +50,17 @@ pipeline {
                 }
             }
         }
+        stage("Deploy docker image to ECR") {
+            steps {
+                script {
+                    withDockerRegistry([credentialsId: 'ecr-credentials', url: "https://554422869155.dkr.ecr.ap-south-1.amazonaws.com"]) {
+                        echo 'Pushing docker image to ECR...'
+                        sh 'docker tag bookmytickets:latest 554422869155.dkr.ecr.ap-south-1.amazonaws.com/patilld94/bookmytickets:1.1.${BUILD_NUMBER}'
+                        echo 'Docker image pushed to ECR successfully!'
+                    }
+                }
+            }
+        }
         stage("Remove docker images from local machine") {
             steps {
                 sh 'docker system prune -af'
