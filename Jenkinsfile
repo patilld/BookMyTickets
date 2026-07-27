@@ -73,7 +73,7 @@ pipeline {
                                                      passwordVariable: 'PASSWORD')]) {
                         echo 'Pushing docker image to Nexus...'
                         sh 'docker tag bookmytickets:latest 65.0.168.23:8085/bookmytickets/bookmytickets:1.1.${BUILD_NUMBER}'
-                        sh 'docker login http://65.0.168.23:8085/ -u ${USERNAME} -p ${PASSWORD}'
+                        sh 'docker login 65.0.168.23:8085/ -u ${USERNAME} -p ${PASSWORD}'
                         sh 'docker push 65.0.168.23:8085/bookmytickets/bookmytickets:1.1.${BUILD_NUMBER}'
                         echo 'Docker image pushed to Nexus successfully!'
                     }
