@@ -52,14 +52,29 @@ pipeline {
         }
         stage("Deploy docker image to ECR") {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',
-                                  credentialsId: 'ecr-credentials']]) {
-                    sh """
-                      docker tag bookmytickets:latest 554422869155.dkr.ecr.ap-south-1.amazonaws.com/patilld94/bookmytickets:1.1.${BUILD_NUMBER}
-                      aws ecr get-login-password --region ap-south-1 \
-                        | docker login --username AWS --password-stdin 554422869155.dkr.ecr.ap-south-1.amazonaws.com
-                      docker push 554422869155.dkr.ecr.ap-south-1.amazonaws.com/patilld94/bookmytickets:1.1.${BUILD_NUMBER}
-                    """
+                script {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',
+                                      credentialsId: 'ecr-credentials']]) {
+                        echo 'Pushing docker image to ECR...'
+                        sh 'docker tag bookmytickets:latest 554422869155.dkr.ecr.ap-south-1.amazonaws.com/patilld94/bookmytickets:1.1.${BUILD_NUMBER}'
+                        sh 'aws ecr get-login-password --region ap-south-1 \
+                            | docker login --username AWS --password-stdin 554422869155.dkr.ecr.ap-south-1.amazonaws.com'
+                        sh 'docker push 554422869155.dkr.ecr.ap-south-1.amazonaws.com/patilld94/bookmytickets:1.1.${BUILD_NUMBER}'
+                        echo 'Docker image pushed to ECR successfully!'
+                    }
+                }
+            }
+        }
+        stage("Deploy docker image to Nexus") {
+            steps {
+                script {
+                    withCredentials(credentialsId='nexus-cred', usernameVariable:'USERNAME', passwordVariable:'PASSWORD') {
+                        echo 'Pushing docker image to Nexus...'
+                        sh 'docker tag bookmytickets:latest http://65.0.168.23:8085/repository/bookmytickets:1.1.${BUILD_NUMBER}'
+                        sh 'docker login http://65.0.168.23:8085/ -u ${USERNAME} -p ${PASSWORD}'
+                        sh 'docker push http://65.0.168.23:8085/repository/bookmytickets:1.1.${BUILD_NUMBER}'
+                        echo 'Docker image pushed to Nexus successfully!'
+                    }
                 }
             }
         }
