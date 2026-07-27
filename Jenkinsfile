@@ -68,7 +68,9 @@ pipeline {
         stage("Deploy docker image to Nexus") {
             steps {
                 script {
-                    withCredentials(credentialsId='nexus-cred', usernameVariable:'USERNAME', passwordVariable:'PASSWORD') {
+                    withCredentials([usernamePassword(credentialsId: 'nexus-cred',
+                                                     usernameVariable: 'USERNAME',
+                                                     passwordVariable: 'PASSWORD')]) {
                         echo 'Pushing docker image to Nexus...'
                         sh 'docker tag bookmytickets:latest http://65.0.168.23:8085/repository/bookmytickets:1.1.${BUILD_NUMBER}'
                         sh 'docker login http://65.0.168.23:8085/ -u ${USERNAME} -p ${PASSWORD}'
