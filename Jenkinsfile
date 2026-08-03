@@ -27,19 +27,19 @@ pipeline {
             }
             steps {
                 withSonarQubeEnv('SonarQubeServer') {
-                    sh """mvn sonar:sonar \
-                          -Dsonar.login=$SONAR_TOKEN
-                    """
+                    sh '''mvn sonar:sonar \
+                          -Dsonar.login="$SONAR_TOKEN"
+                    '''
                 }
             }
         }
-//         stage('Quality Gate') {
-//             steps {
-//                 timeout(time: 5, unit: 'MINUTES') {
-//                     waitForQualityGate abortPipeline: true
-//                 }
-//             }
-//         }
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
         stage("Code package") {
             steps {
                 echo "Code packaging started"
