@@ -28,7 +28,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQubeServer') {
                     sh '''mvn sonar:sonar \
-                          -Dsonar.projectKey=bookmytickets"
+                          -Dsonar.projectKey=bookmytickets
                     '''
                 }
             }
