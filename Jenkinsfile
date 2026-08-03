@@ -22,13 +22,13 @@ pipeline {
             }
         }
         stage('SonarQube Analysis') {
-            environment {
-                SONAR_TOKEN = credentials('sonar-token-id') // Jenkins credential ID
-            }
+//             environment {
+//                 SONAR_TOKEN = credentials('sonar-token-id') // Jenkins credential ID
+//             }
             steps {
                 withSonarQubeEnv('SonarQubeServer') {
                     sh '''mvn sonar:sonar \
-                          -Dsonar.login="$SONAR_TOKEN"
+                          -Dsonar.projectKey=bookmytickets"
                     '''
                 }
             }
