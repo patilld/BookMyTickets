@@ -21,6 +21,25 @@ pipeline {
                 echo "Unit testing completed!!!"
             }
         }
+        stage('SonarQube Analysis') {
+            environment {
+                SONAR_TOKEN = credentials('sonar-token-id') // Jenkins credential ID
+            }
+            steps {
+                withSonarQubeEnv('MySonarQubeServer') {
+                    sh 'mvn sonar:sonar \
+                          -Dsonar.login=$SONAR_TOKEN
+                    """
+                }
+            }
+        }
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
         stage("Code package") {
             steps {
                 echo "Code packaging started"
@@ -65,21 +84,21 @@ pipeline {
                 }
             }
         }
-        stage("Deploy docker image to Nexus") {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'nexus-cred',
-                                                     usernameVariable: 'USERNAME',
-                                                     passwordVariable: 'PASSWORD')]) {
-                        echo 'Pushing docker image to Nexus...'
-                        sh 'docker tag bookmytickets:latest 65.0.168.23:8085/bookmytickets/bookmytickets:1.1.${BUILD_NUMBER}'
-                        sh 'docker login 65.0.168.23:8085/ -u ${USERNAME} -p ${PASSWORD}'
-                        sh 'docker push 65.0.168.23:8085/bookmytickets/bookmytickets:1.1.${BUILD_NUMBER}'
-                        echo 'Docker image pushed to Nexus successfully!'
-                    }
-                }
-            }
-        }
+//         stage("Deploy docker image to Nexus") {
+//             steps {
+//                 script {
+//                     withCredentials([usernamePassword(credentialsId: 'nexus-cred',
+//                                                      usernameVariable: 'USERNAME',
+//                                                      passwordVariable: 'PASSWORD')]) {
+//                         echo 'Pushing docker image to Nexus...'
+//                         sh 'docker tag bookmytickets:latest 65.0.168.23:8085/bookmytickets/bookmytickets:1.1.${BUILD_NUMBER}'
+//                         sh 'docker login 65.0.168.23:8085/ -u ${USERNAME} -p ${PASSWORD}'
+//                         sh 'docker push 65.0.168.23:8085/bookmytickets/bookmytickets:1.1.${BUILD_NUMBER}'
+//                         echo 'Docker image pushed to Nexus successfully!'
+//                     }
+//                 }
+//             }
+//         }
         stage("Remove docker images from local machine") {
             steps {
                 sh 'docker system prune -af'

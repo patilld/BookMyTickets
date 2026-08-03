@@ -28,6 +28,9 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <sonar.host.url>http://13.207.194.52:9000</sonar.host.url>
+        <sonar.projectKey>bookmytickets</sonar.projectKey>
+<!--        <sonar.login>sqp_be565c826a4f27170e04c78a288e28daf6b4bbce</sonar.login>-->
     </properties>
     <dependencies>
         <dependency>
@@ -56,6 +59,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.10.0.2594</version>
             </plugin>
         </plugins>
     </build>
