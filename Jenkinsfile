@@ -26,11 +26,11 @@ pipeline {
                 SONAR_TOKEN = credentials('sonar-token-id') // Jenkins credential ID
             }
             steps {
-                withSonarQubeEnv('MySonarQubeServer') {
+//                 withSonarQubeEnv('MySonarQubeServer') {
                     sh """mvn sonar:sonar \
                           -Dsonar.login=$SONAR_TOKEN
                     """
-                }
+//                 }
             }
         }
         stage('Quality Gate') {
